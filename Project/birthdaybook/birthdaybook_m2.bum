@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<org.eventb.core.machineFile org.eventb.core.configuration="org.eventb.core.fwd" version="5">
+<org.eventb.core.refinesMachine name="'" org.eventb.core.target="birthdaybook_m1"/>
+<org.eventb.core.seesContext name="-" org.eventb.core.target="birthdaybook_c0"/>
+<org.eventb.core.variable name="5" org.eventb.core.comment="array of NAME" org.eventb.core.identifier="NAMES"/>
+<org.eventb.core.variable name="6" org.eventb.core.comment="array of DATE" org.eventb.core.identifier="DATES"/>
+<org.eventb.core.variable name="9" org.eventb.core.comment="shows how much array is in use" org.eventb.core.identifier="used"/>
+<org.eventb.core.variable name="D" org.eventb.core.comment="variable to iterate through DATES" org.eventb.core.identifier="iterate"/>
+<org.eventb.core.variable name="F" org.eventb.core.comment="indexes of cardlist array" org.eventb.core.identifier="ncards"/>
+<org.eventb.core.variable name="G" org.eventb.core.comment="array to store names of people who have birthday today" org.eventb.core.identifier="cardlist"/>
+<org.eventb.core.event name="H" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.label="INITIALISATION">
+<org.eventb.core.action name="+" org.eventb.core.assignment="DATES ≔ ∅" org.eventb.core.label="act4"/>
+<org.eventb.core.action name="-" org.eventb.core.assignment="iterate ≔ 1" org.eventb.core.label="act7"/>
+<org.eventb.core.action name="*" org.eventb.core.assignment="NAMES ≔ ∅" org.eventb.core.label="act5"/>
+<org.eventb.core.action name="," org.eventb.core.assignment="used ≔ 0" org.eventb.core.label="act6"/>
+<org.eventb.core.action name="." org.eventb.core.assignment="ncards ≔ 0" org.eventb.core.label="act8"/>
+<org.eventb.core.action name="/" org.eventb.core.assignment="cardlist ≔ ∅" org.eventb.core.label="act9"/>
+<org.eventb.core.action name="0" org.eventb.core.assignment="r_date :∈ DATE" org.eventb.core.label="act10"/>
+<org.eventb.core.action name="1" org.eventb.core.assignment="r_flag ≔ FALSE" org.eventb.core.label="act11"/>
+</org.eventb.core.event>
+<org.eventb.core.event name="I" org.eventb.core.comment="add a person with their birthday into the birthday book" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.label="add_birthday">
+<org.eventb.core.refinesEvent name="'" org.eventb.core.target="add_birthday"/>
+<org.eventb.core.guard name="'" org.eventb.core.label="grd1" org.eventb.core.predicate="name ∈ PERSON"/>
+<org.eventb.core.parameter name="(" org.eventb.core.identifier="name"/>
+<org.eventb.core.parameter name=")" org.eventb.core.identifier="date"/>
+<org.eventb.core.guard name="*" org.eventb.core.label="grd2" org.eventb.core.predicate="date ∈ DATE"/>
+<org.eventb.core.guard name="internal1" org.eventb.core.label="grd3" org.eventb.core.predicate="name ∉ ran(NAMES)"/>
+<org.eventb.core.action name="internal3" org.eventb.core.assignment="used ≔ used +1" org.eventb.core.label="act5"/>
+<org.eventb.core.action name="internal4" org.eventb.core.assignment="NAMES ≔ NAMES  {used+1 ↦ name}" org.eventb.core.label="act6"/>
+<org.eventb.core.action name="internal2" org.eventb.core.assignment="DATES ≔ DATES  {used+1 ↦ date}" org.eventb.core.label="act4"/>
+<org.eventb.core.guard name="1" org.eventb.core.comment="can only add birthday if remind is not in progress." org.eventb.core.label="grd4" org.eventb.core.predicate="r_flag = FALSE"/>
+</org.eventb.core.event>
+<org.eventb.core.event name="J" org.eventb.core.comment="change a person's birthday" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.label="change_birthday">
+<org.eventb.core.refinesEvent name="'" org.eventb.core.target="change_birthday"/>
+<org.eventb.core.parameter name="'" org.eventb.core.identifier="name"/>
+<org.eventb.core.parameter name="(" org.eventb.core.identifier="date"/>
+<org.eventb.core.guard name=")" org.eventb.core.label="grd1" org.eventb.core.predicate="name ∈ PERSON"/>
+<org.eventb.core.guard name="*" org.eventb.core.label="grd2" org.eventb.core.predicate="date ∈ DATE"/>
+<org.eventb.core.action name="+" org.eventb.core.assignment="DATES(NAMES∼(name)) ≔ date" org.eventb.core.label="act1"/>
+<org.eventb.core.guard name="," org.eventb.core.label="grd3" org.eventb.core.predicate="name ∈ ran(NAMES)"/>
+<org.eventb.core.guard name="-" org.eventb.core.label="grd4" org.eventb.core.predicate="used &gt; 0"/>
+<org.eventb.core.guard name="." org.eventb.core.comment="can only change date if remind is not in progress." org.eventb.core.label="grd5" org.eventb.core.predicate="r_flag = FALSE"/>
+</org.eventb.core.event>
+<org.eventb.core.event name="K" org.eventb.core.comment="Person has birthday today" org.eventb.core.convergence="1" org.eventb.core.extended="false" org.eventb.core.label="remind_birthday_today">
+<org.eventb.core.guard name=")" org.eventb.core.label="grd1" org.eventb.core.predicate="r_date ∈ DATE"/>
+<org.eventb.core.guard name="0" org.eventb.core.label="grd4" org.eventb.core.predicate="ncards &lt; used"/>
+<org.eventb.core.guard name="/" org.eventb.core.label="grd2" org.eventb.core.predicate="iterate ≤ used"/>
+<org.eventb.core.guard name="*" org.eventb.core.comment="date at index iterate is equal to today's date" org.eventb.core.label="grd3" org.eventb.core.predicate="DATES(iterate) = r_date"/>
+<org.eventb.core.action name="," org.eventb.core.assignment="iterate ≔ iterate + 1" org.eventb.core.label="act1"/>
+<org.eventb.core.action name="-" org.eventb.core.assignment="cardlist(ncards+1) ≔ NAMES(iterate)" org.eventb.core.comment="add the name in cardlist" org.eventb.core.label="act2"/>
+<org.eventb.core.action name="." org.eventb.core.assignment="ncards ≔ ncards+1" org.eventb.core.label="act3"/>
+<org.eventb.core.guard name="2" org.eventb.core.comment="obtained lock" org.eventb.core.label="grd5" org.eventb.core.predicate="r_flag = TRUE"/>
+<org.eventb.core.refinesEvent name="3" org.eventb.core.target="remind"/>
+<org.eventb.core.witness name="4" org.eventb.core.label="today" org.eventb.core.predicate="today = r_date"/>
+<org.eventb.core.guard name="5" org.eventb.core.label="grd6" org.eventb.core.predicate="used &gt; 0"/>
+</org.eventb.core.event>
+<org.eventb.core.event name="N" org.eventb.core.comment="Person does not have birthday today" org.eventb.core.convergence="1" org.eventb.core.extended="false" org.eventb.core.label="remind_birthday_not_today">
+<org.eventb.core.guard name="(" org.eventb.core.label="grd1" org.eventb.core.predicate="r_date ∈ DATE"/>
+<org.eventb.core.guard name=")" org.eventb.core.label="grd2" org.eventb.core.predicate="ncards &lt; used"/>
+<org.eventb.core.guard name="*" org.eventb.core.label="grd3" org.eventb.core.predicate="iterate ≤ used"/>
+<org.eventb.core.guard name="+" org.eventb.core.comment="date at index iterate is not equal to today's date" org.eventb.core.label="grd4" org.eventb.core.predicate="DATES(iterate) ≠ r_date"/>
+<org.eventb.core.action name="," org.eventb.core.assignment="iterate ≔ iterate +1" org.eventb.core.comment="move to the next iteration." org.eventb.core.label="act1"/>
+<org.eventb.core.guard name="." org.eventb.core.comment="obtained lock" org.eventb.core.label="grd5" org.eventb.core.predicate="r_flag = TRUE"/>
+<org.eventb.core.witness name="0" org.eventb.core.label="today" org.eventb.core.predicate="today= r_date"/>
+<org.eventb.core.refinesEvent name="1" org.eventb.core.target="remind"/>
+<org.eventb.core.guard name="2" org.eventb.core.label="grd6" org.eventb.core.predicate="used &gt; 0"/>
+</org.eventb.core.event>
+<org.eventb.core.event name="M" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.label="remind_final">
+<org.eventb.core.guard name="'" org.eventb.core.comment="obtained lock" org.eventb.core.label="grd1" org.eventb.core.predicate="r_flag = TRUE"/>
+<org.eventb.core.action name="(" org.eventb.core.assignment="r_flag ≔ FALSE" org.eventb.core.comment="free lock at termination" org.eventb.core.label="act1"/>
+<org.eventb.core.guard name=")" org.eventb.core.label="grd2" org.eventb.core.predicate="iterate &gt; used"/>
+<org.eventb.core.action name="*" org.eventb.core.assignment="cardlist ≔ ∅" org.eventb.core.comment="reset cardlist with empty set" org.eventb.core.label="act2"/>
+<org.eventb.core.action name="+" org.eventb.core.assignment="ncards ≔ 0" org.eventb.core.comment="reset index of cardlist with 0" org.eventb.core.label="act3"/>
+<org.eventb.core.action name="," org.eventb.core.assignment="iterate ≔ 1" org.eventb.core.comment="reset index of DATES with 0" org.eventb.core.label="act4"/>
+<org.eventb.core.refinesEvent name="-" org.eventb.core.target="remind"/>
+<org.eventb.core.witness name="." org.eventb.core.label="today" org.eventb.core.predicate="today = r_date"/>
+<org.eventb.core.guard name="/" org.eventb.core.label="grd3" org.eventb.core.predicate="used &gt; 0"/>
+</org.eventb.core.event>
+<org.eventb.core.event name="L" org.eventb.core.convergence="0" org.eventb.core.extended="false" org.eventb.core.label="obtain_lock">
+<org.eventb.core.guard name="'" org.eventb.core.label="grd1" org.eventb.core.predicate="r_flag = FALSE"/>
+<org.eventb.core.action name="(" org.eventb.core.assignment="r_flag ≔ TRUE" org.eventb.core.comment="acquire lock" org.eventb.core.label="act1"/>
+<org.eventb.core.guard name=")" org.eventb.core.label="grd2" org.eventb.core.predicate="r_date ∈ DATE"/>
+<org.eventb.core.guard name="*" org.eventb.core.label="grd3" org.eventb.core.predicate="iterate=1"/>
+<org.eventb.core.guard name="+" org.eventb.core.comment="there is atleast one person in NAMES" org.eventb.core.label="grd4" org.eventb.core.predicate="used &gt; 0"/>
+</org.eventb.core.event>
+<org.eventb.core.variable name="O" org.eventb.core.identifier="r_date"/>
+<org.eventb.core.variable name="P" org.eventb.core.identifier="r_flag"/>
+<org.eventb.core.invariant name="Q" org.eventb.core.label="inv1" org.eventb.core.predicate="r_date ∈ DATE"/>
+<org.eventb.core.invariant name="R" org.eventb.core.label="inv2" org.eventb.core.predicate="r_flag ∈ BOOL"/>
+<org.eventb.core.variant name="S" org.eventb.core.expression="used − iterate"/>
+<org.eventb.core.invariant name="T" org.eventb.core.label="inv3" org.eventb.core.predicate="iterate ∈ ℕ1"/>
+<org.eventb.core.invariant name="U" org.eventb.core.label="inv4" org.eventb.core.predicate="ncards ∈ ℕ"/>
+<org.eventb.core.invariant name="V" org.eventb.core.label="inv5" org.eventb.core.predicate="cardlist ∈ 1‥ncards → PERSON"/>
+<org.eventb.core.invariant name="W" org.eventb.core.comment="ncards must be less than or equal to total people in NAMES" org.eventb.core.label="inv6" org.eventb.core.predicate="ncards ≤ used"/>
+<org.eventb.core.invariant name="X" org.eventb.core.comment="iterate can only go upto used+1, remind will terminate at this point." org.eventb.core.label="inv7" org.eventb.core.predicate="iterate ≤ used + 1"/>
+</org.eventb.core.machineFile>

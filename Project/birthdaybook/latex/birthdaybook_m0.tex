@@ -1,0 +1,66 @@
+\documentclass[10pt,a4paper]{report}
+\usepackage{bsymb,b2latex}
+\begin{document}
+\SingleHeader{birthdaybook\_m0}
+\MACHINE{birthdaybook\_m0}{}{birthdaybook\_c0}{}
+\VARIABLES{
+	\Variable{known}{}
+	\Variable{birthday}{}
+	\Variable{cards}{}
+}
+\INVARIANTS{
+	\Invariant{inv1}{false}{$birthday \in{} PERSON \pfun{} DATE$}{\\function which, when applied to certain names, gives the birthdays associated with them}
+	\Invariant{inv2}{false}{$known = dom(birthday)$}{\\set of names with birthdays recorded}
+	\Invariant{inv3}{false}{$cards \in{} \pow{}(PERSON)$}{\\set of all values n drawn from the set known such that the value of the birthday function at n is today}
+}
+\EVENTS{
+\INITIALISATION{false}{}{
+	\ACTIONS{false}{
+		\Action{act1}{$known \bcmeq{} \emptyset{}$}{true}{}
+		\Action{act2}{$birthday \bcmeq{} \emptyset{} $}{true}{}
+		\Action{act3}{$cards \bcmeq{} \emptyset{}$}{true}{}
+	}
+}
+\EVT{add\_birthday}{false}{ordinary}{}{\\add a person with their birthday into the birthday book}{
+	\ANY{
+		\Param{name}{true}{}
+		\Param{date}{true}{}
+	}
+	\GUARDS{true}{
+		\Guard{grd1}{false}{$name \in{} PERSON$}{true}{}
+		\Guard{grd2}{false}{$date \in{} DATE$}{true}{}
+		\Guard{grd3}{false}{$name \notin{} known$}{true}{}
+	}
+	\ACTIONS{true}{
+		\Action{act1}{$known \bcmeq{} known \bunion{} \{name\}$}{true}{\\add the name to set known}
+		\Action{act2}{$birthday \bcmeq{} birthday \bunion{} \{name\mapsto{} date\}$}{true}{\\add the name and birth date to function birthday}
+	}
+}
+\EVT{change\_birthday}{false}{ordinary}{}{\\change a person's birthday}{
+	\ANY{
+		\Param{name}{true}{}
+		\Param{date}{true}{}
+	}
+	\GUARDS{true}{
+		\Guard{grd1}{false}{$name \in{} PERSON$}{true}{}
+		\Guard{grd2}{true}{$date \in{} DATE$}{true}{}
+		\Guard{grd3}{false}{$name \in{} known$}{true}{}
+	}
+	\ACTIONS{true}{
+		\Action{act1}{$birthday \bcmeq{} birthday \ovl{} \{name\mapsto{}date\}$}{true}{\\change the birth date associated with name}
+	}
+}
+\EVT{remind}{false}{anticipated}{}{\\remind a person's birthday}{
+	\ANY{
+		\Param{today}{true}{}
+	}
+	\GUARDS{true}{
+		\Guard{grd1}{false}{$today \in{} DATE$}{true}{}
+	}
+	\ACTIONS{true}{
+		\Action{act1}{$cards \bcmeq{} \{n | n\in{}known \land{} birthday(n) = today\}$}{true}{\\if n is known and has birthday today, then add it to cards}
+	}
+}
+}
+\END
+\end{document}

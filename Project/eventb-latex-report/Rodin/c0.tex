@@ -1,0 +1,18 @@
+\documentclass[10pt,a4paper]{report}
+\usepackage{bsymb,b2latex}
+\begin{document}
+\SingleHeader{ctx0}
+\CONTEXT{ctx0}{}{}
+\SETS{
+	\Set{COLOR}{The set of possible color for light signals}
+}
+\CONSTANTS{
+	\Constant{GREEN}{}
+	\Constant{RED}{}
+}
+\AXIOMS{
+	\Axiom{axm1}{false}{$COLOR = \{GREEN,RED\}$}{}
+	\Axiom{axm2}{false}{$\lnot{} GREEN = RED$}{}
+}
+\END
+\end{document}

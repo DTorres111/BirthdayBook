@@ -1,0 +1,56 @@
+\documentclass[10pt,a4paper]{report}
+\usepackage{bsymb,b2latex}
+\begin{document}
+\SingleHeader{m0}
+\MACHINE{m0}{}{}{\\Describes a road intersections\\Conventions: \\~ o variables modelling the environment have names all \\~   in CAPITAL\\~ o variables describing the state of the controller are \\~   all LOWER CASES}
+\VARIABLES{
+	\Variable{EW}{\\Number of cars crossing the intersection in the \\~ east-west direction}
+	\Variable{NS}{Number of cars crossing in the north-south direction}
+}
+\INVARIANTS{
+	\Invariant{inv1}{false}{$EW \in{} \nat{}$}{}
+	\Invariant{inv2}{false}{$NS \in{} \nat{}$}{}
+	\Invariant{inv3}{false}{$EW = 0 \lor{} NS = 0$}{\\YOUR INVARIANT HERE: \\we want to prevent cars from colliding \\in the intersection}
+}
+\EVENTS{
+\INITIALISATION{false}{\\Initially, the intersection \\is empty}{
+	\ACTIONS{false}{
+		\Action{act1}{$EW \bcmeq{} 0$}{true}{}
+		\Action{act2}{$NS \bcmeq{} 0$}{true}{}
+	}
+}
+\EVT{ENTER\_NORTH}{false}{ordinary}{}{\\Environment phenomenon.\\You may have to edit this}{
+	\GUARDS{false}{
+		\Guard{grd1}{false}{$EW=0$}{true}{}
+	}
+	\ACTIONS{true}{
+		\Action{act1}{$NS \bcmeq{} NS + 1$}{true}{}
+	}
+}
+\EVT{EXIT\_SOUTH}{false}{ordinary}{}{\\Environment phenomenon.\\You may have to edit this}{
+	\GUARDS{false}{
+		\Guard{grd1}{false}{$NS > 0$}{true}{}
+	}
+	\ACTIONS{true}{
+		\Action{act1}{$NS \bcmeq{} NS - 1$}{true}{}
+	}
+}
+\EVT{ENTER\_EAST}{false}{ordinary}{}{\\Environment phenomenon.\\You may have to edit this}{
+	\GUARDS{false}{
+		\Guard{grd1}{false}{$NS = 0$}{true}{}
+	}
+	\ACTIONS{true}{
+		\Action{act1}{$EW \bcmeq{} EW + 1$}{true}{}
+	}
+}
+\EVT{EXIT\_WEST}{false}{ordinary}{}{\\Environment phenomenon.\\You may have to edit this}{
+	\GUARDS{false}{
+		\Guard{grd1}{false}{$EW > 0$}{true}{}
+	}
+	\ACTIONS{true}{
+		\Action{act1}{$EW \bcmeq{} EW - 1$}{true}{}
+	}
+}
+}
+\END
+\end{document}

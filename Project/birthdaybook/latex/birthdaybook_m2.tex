@@ -1,0 +1,137 @@
+\documentclass[10pt,a4paper]{report}
+\usepackage{bsymb,b2latex}
+\begin{document}
+\SingleHeader{birthdaybook\_m2}
+\MACHINE{birthdaybook\_m2}{birthdaybook\_m1}{birthdaybook\_c0}{}
+\VARIABLES{
+	\Variable{NAMES}{array of NAME}
+	\Variable{DATES}{array of DATE}
+	\Variable{used}{shows how much array is in use}
+	\Variable{iterate}{variable to iterate through DATES}
+	\Variable{ncards}{indexes of cardlist array}
+	\Variable{cardlist}{array to store names of people who have birthday today}
+	\Variable{r\_date}{}
+	\Variable{r\_flag}{}
+}
+\INVARIANTS{
+	\Invariant{inv1}{false}{$r\_date \in{} DATE$}{}
+	\Invariant{inv2}{false}{$r\_flag \in{} BOOL$}{}
+	\Invariant{inv3}{false}{$iterate \in{} \natn{}$}{}
+	\Invariant{inv4}{false}{$ncards \in{} \nat{}$}{}
+	\Invariant{inv5}{false}{$cardlist \in{} 1\upto{}ncards \tfun{} PERSON$}{}
+	\Invariant{inv6}{false}{$ncards \leq{} used$}{\\ncards must be less than or equal to total people in NAMES}
+	\Invariant{inv7}{false}{$iterate \leq{} used + 1$}{\\iterate can only go upto used+1, remind will terminate at this point.}
+}
+\VARIANT{
+	\Variant{$used - iterate$}{}
+}
+\EVENTS{
+\INITIALISATION{false}{}{
+	\ACTIONS{false}{
+		\Action{act4}{$DATES \bcmeq{} \emptyset{}$}{true}{}
+		\Action{act7}{$iterate \bcmeq{} 1$}{true}{}
+		\Action{act5}{$NAMES \bcmeq{} \emptyset{}$}{true}{}
+		\Action{act6}{$used \bcmeq{} 0$}{true}{}
+		\Action{act8}{$ncards \bcmeq{} 0$}{true}{}
+		\Action{act9}{$cardlist \bcmeq{} \emptyset{}$}{true}{}
+		\Action{act10}{$r\_date \bcmin{} DATE$}{true}{}
+		\Action{act11}{$r\_flag \bcmeq{} FALSE$}{true}{}
+	}
+}
+\EVT{add\_birthday}{false}{ordinary}{add\_birthday}{\\add a person with their birthday into the birthday book}{
+	\ANY{
+		\Param{name}{true}{}
+		\Param{date}{true}{}
+	}
+	\GUARDS{true}{
+		\Guard{grd1}{false}{$name \in{} PERSON$}{true}{}
+		\Guard{grd2}{false}{$date \in{} DATE$}{true}{}
+		\Guard{grd3}{false}{$name \notin{} ran(NAMES)$}{true}{}
+		\Guard{grd4}{false}{$r\_flag = FALSE$}{true}{\\can only add birthday if remind is not in progress.}
+	}
+	\ACTIONS{true}{
+		\Action{act5}{$used \bcmeq{} used +1$}{true}{}
+		\Action{act6}{$NAMES \bcmeq{} NAMES \ovl{} \{used+1 \mapsto{} name\}$}{true}{}
+		\Action{act4}{$DATES \bcmeq{} DATES \ovl{} \{used+1 \mapsto{} date\}$}{true}{}
+	}
+}
+\EVT{change\_birthday}{false}{ordinary}{change\_birthday}{\\change a person's birthday}{
+	\ANY{
+		\Param{name}{true}{}
+		\Param{date}{true}{}
+	}
+	\GUARDS{true}{
+		\Guard{grd1}{false}{$name \in{} PERSON$}{true}{}
+		\Guard{grd2}{false}{$date \in{} DATE$}{true}{}
+		\Guard{grd3}{false}{$name \in{} ran(NAMES)$}{true}{}
+		\Guard{grd4}{false}{$used > 0$}{true}{}
+		\Guard{grd5}{false}{$r\_flag = FALSE$}{true}{\\can only change date if remind is not in progress.}
+	}
+	\ACTIONS{true}{
+		\Action{act1}{$DATES(NAMES\converse{}(name)) \bcmeq{} date$}{true}{}
+	}
+}
+\EVT{remind\_birthday\_today}{false}{convergent}{remind}{\\Person has birthday today}{
+	\GUARDS{false}{
+		\Guard{grd1}{false}{$r\_date \in{} DATE$}{true}{}
+		\Guard{grd4}{false}{$ncards < used$}{true}{}
+		\Guard{grd2}{false}{$iterate \leq{} used$}{true}{}
+		\Guard{grd3}{false}{$DATES(iterate) = r\_date$}{true}{\\date at index iterate is equal to today's date}
+		\Guard{grd5}{false}{$r\_flag = TRUE$}{true}{\\obtained lock}
+		\Guard{grd6}{false}{$used > 0$}{true}{}
+	}
+	\WITNESSES{
+		\Witness{today}{$today = r\_date$}{}
+	}
+	\ACTIONS{true}{
+		\Action{act1}{$iterate \bcmeq{} iterate + 1$}{true}{}
+		\Action{act2}{$cardlist(ncards+1) \bcmeq{} NAMES(iterate)$}{true}{\\add the name in cardlist}
+		\Action{act3}{$ncards \bcmeq{} ncards+1$}{true}{}
+	}
+}
+\EVT{remind\_birthday\_not\_today}{false}{convergent}{remind}{\\Person does not have birthday today}{
+	\GUARDS{false}{
+		\Guard{grd1}{false}{$r\_date \in{} DATE$}{true}{}
+		\Guard{grd2}{false}{$ncards < used$}{true}{}
+		\Guard{grd3}{false}{$iterate \leq{} used$}{true}{}
+		\Guard{grd4}{false}{$DATES(iterate) \neq{} r\_date$}{true}{\\date at index iterate is not equal to today's date}
+		\Guard{grd5}{false}{$r\_flag = TRUE$}{true}{\\obtained lock}
+		\Guard{grd6}{false}{$used > 0$}{true}{}
+	}
+	\WITNESSES{
+		\Witness{today}{$today= r\_date$}{}
+	}
+	\ACTIONS{true}{
+		\Action{act1}{$iterate \bcmeq{} iterate +1$}{true}{\\move to the next iteration.}
+	}
+}
+\EVT{remind\_final}{false}{ordinary}{remind}{}{
+	\GUARDS{false}{
+		\Guard{grd1}{false}{$r\_flag = TRUE$}{true}{\\obtained lock}
+		\Guard{grd2}{false}{$iterate > used$}{true}{}
+		\Guard{grd3}{false}{$used > 0$}{true}{}
+	}
+	\WITNESSES{
+		\Witness{today}{$today = r\_date$}{}
+	}
+	\ACTIONS{true}{
+		\Action{act1}{$r\_flag \bcmeq{} FALSE$}{true}{\\free lock at termination}
+		\Action{act2}{$cardlist \bcmeq{} \emptyset{}$}{true}{\\reset cardlist with empty set}
+		\Action{act3}{$ncards \bcmeq{} 0$}{true}{\\reset index of cardlist with 0}
+		\Action{act4}{$iterate \bcmeq{} 1$}{true}{\\reset index of DATES with 0}
+	}
+}
+\EVT{obtain\_lock}{false}{ordinary}{}{}{
+	\GUARDS{false}{
+		\Guard{grd1}{false}{$r\_flag = FALSE$}{true}{}
+		\Guard{grd2}{false}{$r\_date \in{} DATE$}{true}{}
+		\Guard{grd3}{false}{$iterate=1$}{true}{}
+		\Guard{grd4}{false}{$used > 0$}{true}{\\there is atleast one person in NAMES}
+	}
+	\ACTIONS{true}{
+		\Action{act1}{$r\_flag \bcmeq{} TRUE$}{true}{\\acquire lock}
+	}
+}
+}
+\END
+\end{document}

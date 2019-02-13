@@ -1,0 +1,75 @@
+\documentclass[10pt,a4paper]{report}
+\usepackage{bsymb,b2latex}
+\begin{document}
+\SingleHeader{birthdaybook\_m1}
+\MACHINE{birthdaybook\_m1}{birthdaybook\_m0}{birthdaybook\_c0}{}
+\VARIABLES{
+	\Variable{NAMES}{array of NAME}
+	\Variable{DATES}{array of DATE}
+	\Variable{used}{shows how much array is in use}
+	\Variable{r\_set}{r$\_$set store names of popele who have birthday today}
+}
+\INVARIANTS{
+	\Invariant{inv1}{false}{$NAMES \in{} 1\upto{}used \tfun{} PERSON$}{}
+	\Invariant{inv2}{false}{$DATES \in{} 1\upto{}used \tfun{} DATE$}{}
+	\Invariant{inv3}{false}{$used \in{} \nat{}$}{}
+	\Invariant{inv4}{false}{$\forall{}i,j \qdot{} i \in{} 1\upto{}used  \land{} j \in{} 1\upto{}used \land{} i\neq{} j \limp{} NAMES(i) \neq{} NAMES(j)$}{}
+	\Invariant{inv5}{false}{$known = ran(NAMES)$}{\\glue invariant}
+	\Invariant{inv6}{false}{$\forall{}i\qdot{}i\in{}1\upto{}used \limp{} birthday(NAMES(i)) = DATES(i)$}{\\glue invariant}
+	\Invariant{inv7}{false}{$r\_set \subseteq{} ran(NAMES)$}{}
+}
+\EVENTS{
+\INITIALISATION{false}{}{
+	\ACTIONS{false}{
+		\Action{act1}{$DATES \bcmeq{} \emptyset{}$}{true}{}
+		\Action{act2}{$NAMES \bcmeq{} \emptyset{}$}{true}{}
+		\Action{act3}{$used \bcmeq{} 0$}{true}{}
+		\Action{act4}{$r\_set \bcmeq{} \emptyset{}$}{true}{}
+	}
+}
+\EVT{add\_birthday}{false}{ordinary}{add\_birthday}{\\add a person with their birthday into the birthday book}{
+	\ANY{
+		\Param{name}{true}{}
+		\Param{date}{true}{}
+	}
+	\GUARDS{true}{
+		\Guard{grd1}{false}{$name \in{} PERSON$}{true}{}
+		\Guard{grd2}{false}{$date \in{} DATE$}{true}{}
+		\Guard{grd3}{false}{$name \notin{} ran(NAMES)$}{true}{\\name should not already exist in array 'NAMES'}
+	}
+	\ACTIONS{true}{
+		\Action{act1}{$used \bcmeq{} used +1$}{true}{}
+		\Action{act2}{$NAMES \bcmeq{} NAMES \ovl{} \{used+1 \mapsto{} name\}$}{true}{\\add name at new index in array 'NAMES'}
+		\Action{act3}{$DATES \bcmeq{} DATES \ovl{} \{used+1 \mapsto{} date\}$}{true}{\\add date at new index in array 'DATES'}
+	}
+}
+\EVT{change\_birthday}{false}{ordinary}{change\_birthday}{\\change a person's birthday}{
+	\ANY{
+		\Param{name}{true}{}
+		\Param{date}{true}{}
+	}
+	\GUARDS{true}{
+		\Guard{grd1}{false}{$name \in{} PERSON$}{true}{}
+		\Guard{grd2}{false}{$date \in{} DATE$}{true}{}
+		\Guard{grd3}{false}{$name \in{} ran(NAMES)$}{true}{\\name already exist in array 'NAMES'}
+		\Guard{grd4}{false}{$used > 0$}{true}{}
+	}
+	\ACTIONS{true}{
+		\Action{act1}{$DATES(NAMES\converse{}(name)) \bcmeq{} date$}{true}{\\~change date corresponding to specific name}
+	}
+}
+\EVT{remind}{false}{anticipated}{remind}{\\remind a person's birthday}{
+	\ANY{
+		\Param{today}{true}{}
+	}
+	\GUARDS{true}{
+		\Guard{grd1}{false}{$today \in{} DATE$}{true}{}
+		\Guard{grd2}{false}{$used > 0$}{true}{}
+	}
+	\ACTIONS{true}{
+		\Action{act1}{$r\_set \bcmeq{} ran(DATES\converse{}[\{today\}] \domres{} NAMES) $}{true}{\\inverse relation to get names of all persons who have birthday today.}
+	}
+}
+}
+\END
+\end{document}
